@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BARQ ERP Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        .navbar {
+            background: #34495e;
+            padding: 15px 20px;
+            border-bottom: 3px solid #ecf0f1;
+        }
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ecf0f1;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-brand img {
+            max-height: 40px;
+            margin-right: 10px;
+        }
+        .navbar-toggler {
+            border-color: #ecf0f1;
+        }
+        .navbar-toggler-icon {
+            color: #ecf0f1;
+        }
+        .navbar-nav {
+            margin: 0 auto;
+        }
+        .nav-link {
+            font-size: 18px;
+            color: #ecf0f1 !important;
+            margin-right: 20px;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #f39c12 !important;
+            transform: scale(1.1);
+        }
+        .dropdown-menu {
+            background-color: #1c2833;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .dropdown-item {
+            color: #ecf0f1 !important;
+            transition: background-color 0.3s ease;
+        }
+        .dropdown-item:hover {
+            background-color: #34495e;
+        }
+        .container {
+            padding-top: 2rem;
+            max-width: 1400px;
+        }
+        .container .card {  
+            background: #34495e;
+            color: #ecf0f1;
+            border: 1px solid #ecf0f1;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .container .card:hover {
+            transform: translateY(-10px);
+        }
+        .card-header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            font-weight: 600;
+            text-align: center;
+        }
+        .btn {
+            border-radius: 20px;
+            font-weight: 600;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        .btn:hover {
+            background-color: #f39c12;
+            color: #2c3e50;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        .scorecards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .scorecard {
+            flex: 1;
+            margin: 10px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        .scorecard:hover {
+            transform: translateY(-10px);
+            background-color: #f39c12;
+            color: #2c3e50;
+        }
+        .scorecard .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="/">
+            <img src="static/images/logo.png" alt="BARQ ERP"> BARQ ERP
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#saned_management">Saned Control</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#courier_profile">Courier Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#vehicle_fleet">Vehicle & Fleet</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#accommodation_facilities">Accommodation & Facilities</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#performance_orders">Performance & Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#tickets_tasks">Tickets & Tasks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#finance_settlement">Finance & Settlement</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#fetch_data">Export Data</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        <section id="saned_management">
+            <div class="card mb-4">
+                <div class="card-header">Saned Control</div>
+                <div class="card-body">
+                    <div class="card mb-4">
+                        <div class="card-header">Login to Saned</div>
+                        <div class="card-body">
+                            <button onclick="handleLoginToSaned()" class="btn btn-primary">Login to Saned</button>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">Update IMEI</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="driverIdUpdateImei">Driver ID:</label>
+                                <input type="text" id="driverIdUpdateImei" class="form-control" placeholder="Enter Driver ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="newImei">New IMEI:</label>
+                                <input type="text" id="newImei" class="form-control" placeholder="Enter New IMEI">
+                            </div>
+                            <button onclick="handleUpdateImei()" class="btn btn-danger">Update IMEI</button>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">Reset Password</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="driverIdResetPassword">Driver ID:</label>
+                                <input type="text" id="driverIdResetPassword" class="form-control" placeholder="Enter Driver ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="imeiResetPassword">IMEI:</label>
+                                <input type="text" id="imeiResetPassword" class="form-control" placeholder="Enter IMEI">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password:</label>
+                                <input type="password" id="newPassword" class="form-control" placeholder="Enter New Password">
+                            </div>
+                            <button onclick="handleResetPassword()" class="btn btn-warning text-dark">Reset Password</button>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">Activate Driver</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="driverIdActivate">Driver ID:</label>
+                                <input type="text" id="driverIdActivate" class="form-control" placeholder="Enter Driver ID">
+                            </div>
+                            <button onclick="handleActivateDriver()" class="btn btn-success">Activate Driver</button>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">Add Priority to Driver</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="driverIdAddPriority">Driver ID:</label>
+                                <input type="text" id="driverIdAddPriority" class="form-control" placeholder="Enter Driver ID">
+                            </div>
+                            <button onclick="handleAddPriority()" class="btn btn-dark">Add Priority</button>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">Delete Driver Tags</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="driverIdDeleteTags">Driver ID:</label>
+                                <input type="text" id="driverIdDeleteTags" class="form-control" placeholder="Enter Driver ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="tagIdDelete">Tag ID:</label>
+                                <input type="text" id="tagIdDelete" class="form-control" placeholder="Enter Tag ID">
+                            </div>
+                            <button onclick="handleDeleteDriverTags()" class="btn btn-info">Delete Tags</button>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">Deactivate Driver</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="driverIdDeactivate">Driver ID:</label>
+                                <input type="text" id="driverIdDeactivate" class="form-control" placeholder="Enter Driver ID">
+                            </div>
+                            <button onclick="handleDeactivateDriver()" class="btn btn-dark">Deactivate Driver</button>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">Update Mobile</div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="driverIdUpdateMobile">Driver ID:</label>
+                                <input type="text" id="driverIdUpdateMobile" class="form-control" placeholder="Enter Driver ID">
+                            </div>
+                            <div class="form-group">
+                                <label for="newMobile">New Mobile Number:</label>
+                                <input type="text" id="newMobile" class="form-control" placeholder="Enter New Mobile Number">
+                            </div>
+                            <button onclick="handleUpdateMobile()" class="btn btn-warning text-dark">Update Mobile</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="courier_profile">
+            <div class="card mb-4">
+                <div class="card-header">Courier Profile</div>
+                <div class="card-body">
+                    <div class="container">
+                        <h1 class="text-center mb-4">Courier Information</h1>
+
+                        <!-- Scorecards -->
+                        <div class="scorecards">
+                            <div class="scorecard" id="scorecard-total-active-couriers">
+                                <div class="loader" id="loader-total-active-couriers"></div>
+                                <h2 id="total-active-couriers">0</h2>
+                                <p>Active Couriers</p>
+                            </div>
+                            <div class="scorecard" id="scorecard-active-ecommerce-couriers">
+                                <div class="loader" id="loader-active-ecommerce-couriers"></div>
+                                <h2 id="active-ecommerce-couriers">0</h2>
+                                <p>Active Couriers (Ecommerce)</p>
+                            </div>
+                            <div class="scorecard" id="scorecard-active-food-couriers">
+                                <div class="loader" id="loader-active-food-couriers"></div>
+                                <h2 id="active-food-couriers">0</h2>
+                                <p>Active Couriers (Food)</p>
+                            </div>
+                            <div class="scorecard" id="scorecard-active-motorcycle-couriers">
+                                <div class="loader" id="loader-active-motorcycle-couriers"></div>
+                                <h2 id="active-motorcycle-couriers">0</h2>
+                                <p>Active Couriers (Motorcycle)</p>
+                            </div>
+                            <div class="scorecard" id="scorecard-inhouse-couriers">
+                                <div class="loader" id="loader-inhouse-couriers"></div>
+                                <h2 id="inhouse-couriers">0</h2>
+                                <p>Inhouse Couriers</p>
+                            </div>
+                            <div class="scorecard" id="scorecard-ajeer-couriers">
+                                <div class="loader" id="loader-ajeer-couriers"></div>
+                                <h2 id="ajeer-couriers">0</h2>
+                                <p>Ajeer Couriers</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="courier-select">Select Courier:</label>
+                            <select id="courier-select" class="form-control select2" style="width: 100%;">
+                                <option value="">--Select--</option>
+                                <!-- Dynamic options here -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-date">Filter by Joining Date:</label>
+                            <select id="filter-date" class="form-control select2" style="width: 100%;">
+                                <option value="">--Select--</option>
+                                <!-- Dynamic options here -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-City">Filter by City:</label>
+                            <select id="filter-City" class="form-control select2" style="width: 100%;">
+                                <option value="">--Select--</option>
+                                <!-- Dynamic options here -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-BARQ_ID">Filter by BARQ ID:</label>
+                            <select id="filter-BARQ_ID" class="form-control select2" style="width: 100%;">
+                                <option value="">--Select--</option>
+                                <!-- Dynamic options here -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-status">Filter by Status:</label>
+                            <select id="filter-status" class="form-control select2" style="width: 100%;">
+                                <option value="">--Select--</option>
+                                <!-- Dynamic options here -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-id-number">Filter by ID Number:</label>
+                            <select id="filter-id-number" class="form-control select2" style="width: 100%;">
+                                <option value="">--Select--</option>
+                                <!-- Dynamic options here -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-sponsorship">Filter by Sponsorship Status:</label>
+                            <select id="filter-sponsorship" class="form-control select2" style="width: 100%;">
+                                <option value="">--Select--</option>
+                                <!-- Dynamic options here -->
+                            </select>
+                        </div>
+                        <button id="filter-button" class="btn btn-primary">Apply Filters</button>
+
+                        <div id="courier-info">
+                            <!-- Loader -->
+                            <div id="loader" class="loader"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="vehicle_fleet">
+            <div class="card mb-4">
+                <div class="card-header">Vehicle & Fleet</div>
+                <div class="card-body">
+                    <div class="container">
+                        <h1 class="text-center mb-4">Vehicle & Fleet Management</h1>
+                        <p class="text-center">Manage your vehicle and fleet data here.</p>
+                        <!-- Additional content for vehicle and fleet management -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="accommodation_facilities">
+            <div class="card mb-4">
+                <div class="card-header">Accommodation & Facilities</div>
+                <div class="card-body">
+                    <div class="container">
+                        <h1 class="text-center mb-4">Accommodation & Facilities</h1>
+                        <p class="text-center">Manage your accommodation and facilities data here.</p>
+                        <!-- Additional content for accommodation and facilities -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="performance_orders">
+            <div class="card mb-4">
+                <div class="card-header">Performance & Orders</div>
+                <div class="card-body">
+                    <div class="container">
+                        <h1 class="text-center mb-4">Performance & Orders Management</h1>
+                        <p class="text-center">Manage your performance and orders data here.</p>
+                        <iframe width="100%" height="850" src="https://lookerstudio.google.com/embed/reporting/7c6f223c-e554-449f-b9e0-94b793546335/page/j87oD" frameborder="0" style="border:0" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tickets_tasks">
+            <div class="card mb-4">
+                <div class="card-header">Tickets & Tasks</div>
+                <div class="card-body">
+                    <div class="container">
+                        <h1 class="text-center mb-4">Tickets & Tasks Management</h1>
+                        <p class="text-center">Manage your tickets and tasks data here.</p>
+                        <!-- Additional content for tickets and tasks management -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="finance_settlement">
+            <div class="card mb-4">
+                <div class="card-header">Finance & Settlement</div>
+                <div class="card-body">
+                    <div class="container">
+                        <h1 class="text-center mb-4">Finance & Settlement</h1>
+                        <p class="text-center">Manage your finance and settlement data here.</p>
+                        <!-- Additional content for finance and settlement management -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="fetch_data">
+            <div class="card mb-4">
+                <div class="card-header">Export Data</div>
+                <div class="card-body">
+                    <div class="container">
+                        <h1 class="text-center mb-4">Export Data</h1>
+                        <form id="exportDataForm">
+                            <div class="form-group">
+                                <label for="startMonth">Start Month:</label>
+                                <input type="month" id="startMonth" name="startMonth" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sponsorshipStatus">Sponsorship Status:</label>
+                                <select id="sponsorshipStatus" name="sponsorshipStatus" class="form-control">
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="project">Project:</label>
+                                <select id="project" name="project" class="form-control">
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="status">Status:</label>
+                                <select id="status" name="status" class="form-control">
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Export Data</button>
+                        </form>
+                        <div id="responseMessage" class="mt-4"></div>
+                        <div id="sqlQuery" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="static/js/script.js"></script>
+</body>
+</html>

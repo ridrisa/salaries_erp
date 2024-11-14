@@ -1,0 +1,157 @@
+<!-- ./templates/index.html -->
+{% extends "base.html" %}
+
+{% block title %}Home - BARQ ERP{% endblock %}
+
+{% block content %}
+<div class="text-center my-5">
+    <h1 class="display-4 text-primary" style="font-family: 'Recursive', cursive;">BARQ ERP</h1>
+    <p class="lead text-secondary">Streamline Your Business Operations with Ease</p>
+</div>
+
+<div class="text-center mb-5">
+    <img src="{{ url_for('static', filename='images/erp26.png') }}" alt="BARQ ERP" class="img-fluid rounded shadow-sm" style="height: 200px; width: 200px;">
+</div>
+
+<div class="card mb-4">
+    <div class="card-body text-center">
+        <h2 class="text-info">Discover Our Powerful Modules</h2>
+        <p class="text-muted">Select a module to get started</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Courier Profile Module -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white text-center">Courier Profile</div>
+            <img src="{{ url_for('static', filename='images/courier_profile.png') }}" class="card-img-top p-3" alt="Courier Profile">
+            <div class="card-body text-center">
+                <a href="/courier_profile" class="btn btn-primary">View Details <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Vehicle & Fleet Module -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-secondary text-white text-center">Vehicle & Fleet</div>
+            <img src="{{ url_for('static', filename='images/fleet2.png') }}" class="card-img-top p-3" alt="Vehicle & Fleet">
+            <div class="card-body text-center">
+                <a href="/vehicle_fleet" class="btn btn-secondary">View Details <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Accommodation & Facilities Module -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white text-center">Accommodation & Facilities</div>
+            <img src="{{ url_for('static', filename='images/accommodation.png') }}" class="card-img-top p-3" alt="Accommodation & Facilities">
+            <div class="card-body text-center">
+                <a href="/accommodation_facilities" class="btn btn-success">View Details <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Saned Management Module -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-warning text-dark text-center">Saned Management</div>
+            <img src="{{ url_for('static', filename='images/saned_management.png') }}" class="card-img-top p-3" alt="Saned Management">
+            <div class="card-body text-center">
+                <a href="/saned_management" class="btn btn-warning text-dark">View Details <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Performance & Orders Module -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white text-center">Performance & Orders</div>
+            <img src="{{ url_for('static', filename='images/performance_orders.png') }}" class="card-img-top p-3" alt="Performance & Orders">
+            <div class="card-body text-center">
+                <a href="/performance_orders" class="btn btn-info">View Details <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tickets & Tasks Module -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-danger text-white text-center">Tickets & Tasks</div>
+            <img src="{{ url_for('static', filename='images/tickets_tasks.png') }}" class="card-img-top p-3" alt="Tickets & Tasks">
+            <div class="card-body text-center">
+                <a href="/tickets_tasks" class="btn btn-danger">View Details <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Finance & Settlement Module -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-dark text-white text-center">Finance & Settlement</div>
+            <img src="{{ url_for('static', filename='images/finance_settlement.png') }}" class="card-img-top p-3" alt="Finance & Settlement">
+            <div class="card-body text-center">
+                <a href="/finance_settlement" class="btn btn-dark">View Details <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Export Data Module -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white text-center">Export Data</div>
+            <img src="{{ url_for('static', filename='images/export_data.png') }}" class="card-img-top p-3" alt="Export Data">
+            <div class="card-body text-center">
+                <a href="/fetch_data" class="btn btn-primary">View Details <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Salary Module -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white text-center">Salary</div>
+            <img src="{{ url_for('static', filename='images/salary.png') }}" class="card-img-top p-3" alt="Salary">
+            <div class="card-body text-center">
+                <a href="/salary" class="btn btn-success">View Details <i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Additional Creative Enhancements -->
+    <!-- Example: Statistics Overview -->
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body text-center">
+                <h3 class="text-secondary">Key Statistics</h3>
+                <div class="row g-3 mt-3">
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-white shadow-sm">
+                            <i class="fas fa-users fa-2x text-primary"></i>
+                            <h4 class="mt-2">Total Users</h4>
+                            <p class="mb-0">1,250</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-white shadow-sm">
+                            <i class="fas fa-truck fa-2x text-success"></i>
+                            <h4 class="mt-2">Active Couriers</h4>
+                            <p class="mb-0">850</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 border rounded bg-white shadow-sm">
+                            <i class="fas fa-dollar-sign fa-2x text-warning"></i>
+                            <h4 class="mt-2">Total Revenue</h4>
+                            <p class="mb-0">$1.2M</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

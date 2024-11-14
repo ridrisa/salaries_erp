@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<!--style>
+body {
+    background: url("{{ url_for('static', filename='images/jahezcontrol.png') }}") ;
+    background-size: auto;
+}
+</style-->
+<div class="container text-center my-4">
+    <h1 class="display-4 text-primary" style="font-family: 'Recursive', cursive;">Saned Management</h1>
+</div>
+<div class="container">
+<div class="logo-container text-center my-5">
+        <img src="{{ url_for('static', filename='images/jahez18.png') }}" alt="BARQ ERP" class="cover-photo logo rounded-img" style="height:10% ; width:20%; ">
+    </div>
+
+    <div class="power-button-container text-center my-4">
+        <button id="powerButton" onclick="handleLoginToSaned()" class="btn btn-primary power-button">
+            <i class="fas fa-power-off"></i> Login to Saned
+        </button>
+    </div>
+ 
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">Update IMEI</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="driverIdUpdateImei">Driver ID:</label>
+                        <input type="text" id="driverIdUpdateImei" class="form-control" placeholder="Enter Driver ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="newImei">New IMEI:</label>
+                        <input type="text" id="newImei" class="form-control" placeholder="Enter New IMEI">
+                    </div>
+                    <button onclick="handleUpdateImei()" class="btn btn-danger">Update IMEI</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">Reset Password</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="driverIdResetPassword">Driver ID:</label>
+                        <input type="text" id="driverIdResetPassword" class="form-control" placeholder="Enter Driver ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="imeiResetPassword">IMEI:</label>
+                        <input type="text" id="imeiResetPassword" class="form-control" placeholder="Enter IMEI">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password:</label>
+                        <input type="password" id="newPassword" class="form-control" placeholder="Enter New Password">
+                    </div>
+                    <button onclick="handleResetPassword()" class="btn btn-warning text-dark">Reset Password</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">Activate Driver</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="driverIdActivate">Driver ID:</label>
+                        <input type="text" id="driverIdActivate" class="form-control" placeholder="Enter Driver ID">
+                    </div>
+                    <button onclick="handleActivateDriver()" class="btn btn-success">Activate Driver</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">Add Priority to Driver</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="driverIdAddPriority">Driver ID:</label>
+                        <input type="text" id="driverIdAddPriority" class="form-control" placeholder="Enter Driver ID">
+                    </div>
+                    <button onclick="handleAddPriority()" class="btn btn-dark">Add Priority</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">Delete Driver Tags</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="driverIdDeleteTags">Driver ID:</label>
+                        <input type="text" id="driverIdDeleteTags" class="form-control" placeholder="Enter Driver ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="tagIdDelete">Tag ID:</label>
+                        <input type="text" id="tagIdDelete" class="form-control" placeholder="Enter Tag ID">
+                    </div>
+                    <button onclick="handleDeleteDriverTags()" class="btn btn-info">Delete Tags</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">Deactivate Driver</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="driverIdDeactivate">Driver ID:</label>
+                        <input type="text" id="driverIdDeactivate" class="form-control" placeholder="Enter Driver ID">
+                    </div>
+                    <button onclick="handleDeactivateDriver()" class="btn btn-dark">Deactivate Driver</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">Update Mobile</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="driverIdUpdateMobile">Driver ID:</label>
+                        <input type="text" id="driverIdUpdateMobile" class="form-control" placeholder="Enter Driver ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="newMobile">New Mobile Number:</label>
+                        <input type="text" id="newMobile" class="form-control" placeholder="Enter New Mobile Number">
+                    </div>
+                    <button onclick="handleUpdateMobile()" class="btn btn-warning text-dark">Update Mobile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+<!-- Modal -->
+<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel">Notification</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p class="notification-text"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Performance Chart Section -->
+    <div class="card mb-4">
+        <div class="card-header">Performance Data</div>
+        <div class="card-body">
+            <label for="timeFrame">Select Time Frame:</label>
+            <select id="timeFrame" class="form-control" onchange="updateCharts()">
+                <option value="month">Month</option>
+                <option value="week">Week</option>
+                <option value="day">Day</option>
+            </select>
+            <div id="chartsContainer" class="mt-4">
+                <div class="row">
+                <div id="orderCountChart"></div>
+                <div id="driversCountChart"></div>
+                </div>
+                <div class="row">
+                <div id="revenueAmountChart"></div>
+                <div id="codCollectedChart"></div>
+            </div>
+            <div class="row">
+                <div id="totalDebitsChart"></div>
+                <div id="totalCreditsChart"></div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/js/all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega@5.20.2/build/vega.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0/build/vega-lite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0/build/vega-embed.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('.select2').select2({
+        theme: 'bootstrap4',
+        width: '100%'
+    });
+});
+
+function showModalWithSpinner() {
+    console.log("showModalWithSpinner called");
+    $('.spinner-border').show();
+    console.log("Spinner shown");
+    $('.notification-text').text('');
+    console.log("Notification text cleared");
+    $('#notificationModal').modal('show');
+    console.log("Modal shown");
+}
+
+function hideSpinner() {
+    console.log("hideSpinner called");
+    $('.spinner-border').hide();
+    console.log("Spinner hidden");
+}
+
+function handleLoginToSaned() {
+    showModalWithSpinner();
+    return fetch('/saned/login_to_saned', {
+        method: 'POST',
+    })
+    .then(response => {
+        console.log("Response received", response);
+        return response.json();
+    })
+    .then(data => {
+        console.log("Response data:", data);
+        hideSpinner();
+        if (data.success && !data.error) {
+            $('#powerButton').removeClass('btn-primary').addClass('btn-success');
+            $('#powerButton').html('<i class="fas fa-check"></i> Saned is Logged In');
+            $('.notification-text').text('Logged in successfully.');
+            return true;
+        } else {
+            $('.notification-text').text('Failed to login to Saned: ' + (data.error || 'Unknown error'));
+            return false;
+        }
+    })
+    .catch(error => {
+        console.log("Error occurred:", error);
+        hideSpinner();
+        $('.notification-text').text('Failed to login to Saned: ' + error.message);
+        return false;
+    });
+}
+
+async function handleRequest(endpoint, body = {}) {
+    console.log(`Making request to ${endpoint} with body`, body);
+    showModalWithSpinner();
+    
+    return fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Response from", endpoint, ":", data);
+        hideSpinner();
+        if (data.success && !data.error) {
+            $('.notification-text').html(`Operation successful: ${data.message}`);
+            return { success: true };
+        } else {
+            $('.notification-text').html(`Operation failed: ${data.error}<br>Response: ${data.message}`);
+            return { success: false, error: data.error || 'Unknown error' };
+        }
+    })
+    .catch(error => {
+        console.log("Error occurred:", error);
+        hideSpinner();
+        $('.notification-text').text('Failed to perform operation: ' + error.message);
+        return { success: false, error: error.message };
+    });
+}
+
+async function handleUpdateImei() {
+    console.log("handleUpdateImei called");
+    const loggedIn = await handleLoginToSaned();
+    console.log("Logged in status:", loggedIn);
+    if (!loggedIn) return;
+    
+    const driverId = document.getElementById('driverIdUpdateImei').value;
+    const newImei = document.getElementById('newImei').value;
+    console.log("Updating IMEI for driverId:", driverId, "with newImei:", newImei);
+    
+    const result = await handleRequest('/saned/update_imei', { driverId, newImei });
+    console.log("Update IMEI result:", result);
+    
+    $('.notification-text').text(result.success ? 'IMEI updated successfully' : 'Failed to update IMEI: ' + result.error);
+}
+
+async function handleResetPassword() {
+    console.log("handleResetPassword called");
+    const loggedIn = await handleLoginToSaned();
+    console.log("Logged in status:", loggedIn);
+    if (!loggedIn) return;
+    
+    const driverId = document.getElementById('driverIdResetPassword').value;
+    const imei = document.getElementById('imeiResetPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    console.log("Resetting password for driverId:", driverId, "with IMEI:", imei, "and newPassword:", newPassword);
+    
+    const result = await handleRequest('/saned/reset_password', { driverId, imei, newPassword });
+    console.log("Reset Password result:", result);
+    
+    $('.notification-text').html(`Password reset ${result.success ? 'successfully' : 'failed'}: ${result.error || ''}<br>Response: ${result.message}`);
+}
+
+async function handleActivateDriver() {
+    console.log("handleActivateDriver called");
+    const loggedIn = await handleLoginToSaned();
+    console.log("Logged in status:", loggedIn);
+    if (!loggedIn) return;
+    
+    const driverId = document.getElementById('driverIdActivate').value;
+    console.log("Activating driver with driverId:", driverId);
+    
+    const result = await handleRequest('/saned/activate_driver', { driverId });
+    console.log("Activate Driver result:", result);
+    
+    $('.notification-text').html(`Driver activation ${result.success ? 'successful' : 'failed'}: ${result.error || ''}<br>Response: ${result.message}`);
+}
+
+async function handleAddPriority() {
+    console.log("handleAddPriority called");
+    const loggedIn = await handleLoginToSaned();
+    console.log("Logged in status:", loggedIn);
+    if (!loggedIn) return;
+    
+    const driverId = document.getElementById('driverIdAddPriority').value;
+    console.log("Adding priority for driverId:", driverId);
+    
+    const result = await handleRequest('/saned/add_priority', { driverId, tagId: '20003', tagPriority: '1' });
+    console.log("Add Priority result:", result);
+    
+    $('.notification-text').html(`Priority addition ${result.success ? 'successful' : 'failed'}: ${result.error || ''}<br>Response: ${result.message}`);
+}
+
+async function handleDeleteDriverTags() {
+    console.log("handleDeleteDriverTags called");
+    const loggedIn = await handleLoginToSaned();
+    console.log("Logged in status:", loggedIn);
+    if (!loggedIn) return;
+    
+    const driverId = document.getElementById('driverIdDeleteTags').value;
+    const tagId = document.getElementById('tagIdDelete').value;
+    console.log("Deleting tags for driverId:", driverId, "and tagId:", tagId);
+    
+    const result = await handleRequest('/saned/delete_driver_tags', { driverId, tagId });
+    console.log("Delete Driver Tags result:", result);
+    
+    $('.notification-text').html(`Driver tags deletion ${result.success ? 'successful' : 'failed'}: ${result.error || ''}<br>Response: ${result.message}`);
+}
+
+async function handleDeactivateDriver() {
+    console.log("handleDeactivateDriver called");
+    const loggedIn = await handleLoginToSaned();
+    console.log("Logged in status:", loggedIn);
+    if (!loggedIn) return;
+    
+    const driverId = document.getElementById('driverIdDeactivate').value;
+    console.log("Deactivating driver with driverId:", driverId);
+    
+    const result = await handleRequest('/saned/deactivate_driver', { driverId });
+    console.log("Deactivate Driver result:", result);
+    
+    $('.notification-text').html(`Driver deactivation ${result.success ? 'successful' : 'failed'}: ${result.error || ''}<br>Response: ${result.message}`);
+}
+
+async function handleUpdateMobile() {
+    console.log("handleUpdateMobile called");
+    const loggedIn = await handleLoginToSaned();
+    console.log("Logged in status:", loggedIn);
+    if (!loggedIn) return;
+    
+    const driverId = document.getElementById('driverIdUpdateMobile').value;
+    const newMobile = document.getElementById('newMobile').value;
+    console.log("Updating mobile for driverId:", driverId, "with newMobile:", newMobile);
+    
+    const result = await handleRequest('/saned/update_mobile', { driverId, newMobile });
+    console.log("Update Mobile result:", result);
+    
+    $('.notification-text').html(`Mobile number update ${result.success ? 'successful' : 'failed'}: ${result.error || ''}<br>Response: ${result.message}`);
+}
+
+async function updateCharts() {
+    console.log("updateCharts called");
+    const timeFrame = document.getElementById('timeFrame').value;
+    try {
+        const response = await fetch(`/saned/performance_data?time_frame=${timeFrame}`);
+        const data = await response.json();
+        console.log("Performance data:", data);
+
+        if (data.error) {
+            console.error('Error fetching performance data:', data.error);
+            return;
+        }
+
+        const charts = [
+            { id: 'orderCountChart', title: 'Order Count', field: 'order_count' },
+            { id: 'driversCountChart', title: 'Drivers Count', field: 'drivers_count' },
+            { id: 'revenueAmountChart', title: 'Revenue Amount', field: 'revenue_amount' },
+            { id: 'codCollectedChart', title: 'COD Collected', field: 'cod_collected' },
+            { id: 'totalDebitsChart', title: 'Total Debits', field: 'total_debits' },
+            { id: 'totalCreditsChart', title: 'Total Credits', field: 'total_credits' },
+        ];
+
+        charts.forEach(chart => {
+            const spec = {
+                $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+                width: 750,
+                height: 500,
+                title: { text: chart.title, fontSize: 24 },
+                data: { values: data.dates.map((date, i) => ({ date, value: data[chart.field][i] })) },
+                mark: {
+                    tooltip:true,
+                    type: "bar",width: {band: "0.7"},
+                    cornerRadiusEnd: "10",
+                    fill: "#4C78A8",
+                    stroke: "black",
+                    cursor: "pointer",
+                    fontSize: "24",
+                    
+                },
+                encoding: {
+                    x: { field: 'date', timeUnit: 'monthyear', type: 'temporal', fontSize: "24"},
+                    y: { field: 'value', type: 'quantitative' }
+
+                }
+            };
+            vegaEmbed(`#${chart.id}`, spec);
+        });
+    } catch (error) {
+        console.error('Error fetching performance data:', error);
+    }
+}
+
+// Initial load
+updateCharts();
+</script>
+{% endblock %}

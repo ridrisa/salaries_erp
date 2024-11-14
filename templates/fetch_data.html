@@ -1,0 +1,328 @@
+<!-- ./templates/fetch_data.html -->
+{% extends "base.html" %}
+{% block title %}Fetch and Export Data{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Fetch and Export Data</h1>
+
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">Fetch Data</div>
+        <div class="card-body">
+            <form id="dataForm" method="post">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="start_date" class="form-label">Start Date:</label>
+                        <input type="date" id="start_date" name="start_date" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="end_date" class="form-label">End Date:</label>
+                        <input type="date" id="end_date" name="end_date" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="sponsorshipStatus" class="form-label">Sponsorship Status:</label>
+                        <select id="sponsorshipStatus" name="sponsorshipStatus" class="form-select select2">
+                            <option value="all">All</option>
+                            {% for status in sponsorshipStatus %}
+                            <option value="{{ status }}">{{ status }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="project" class="form-label">Project:</label>
+                        <select id="project" name="project" class="form-select select2">
+                            <option value="all">All</option>
+                            {% for proj in projects %}
+                            <option value="{{ proj }}">{{ proj }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="status" class="form-label">Status:</label>
+                        <select id="status" name="status" class="form-select select2">
+                            <option value="all">All</option>
+                            {% for stat in statuses %}
+                            <option value="{{ stat }}">{{ stat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">Fetch Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- BigQuery Interaction -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">BigQuery Interaction</div>
+        <div class="card-body">
+            <form id="bigQueryForm" method="post">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="tableSelect" class="form-label">Select Table:</label>
+                        <select id="tableSelect" class="form-select select2" name="table">
+                            <option value="">--Select--</option>
+                            <!-- Dynamic options populated via JS -->
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="columnsSelect" class="form-label">Select Columns:</label>
+                        <select id="columnsSelect" class="form-select select2" multiple name="columns">
+                            <!-- Dynamic options populated via JS -->
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="limitInput" class="form-label">Limit:</label>
+                        <input type="number" id="limitInput" class="form-control" name="limit" placeholder="Enter limit">
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success">Execute Query</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Response Messages -->
+    <div id="responseMessage" class="mt-4"></div>
+    <div id="sqlQuery" class="mt-4"></div>
+    <div id="resultsTable" class="mt-4"></div>
+    <div class="text-center">
+        <button id="downloadCsv" class="btn btn-success mt-4">Download CSV</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Populate Tables and Columns for BigQuery
+        fetch('/fetch_data/get_tables')
+            .then(response => response.json())
+            .then(data => {
+                if (data.tables) {
+                    const tableSelect = document.getElementById('tableSelect');
+                    data.tables.forEach(table => {
+                        const option = document.createElement('option');
+                        option.value = table;
+                        option.text = table;
+                        tableSelect.add(option);
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+
+        // Populate Columns based on selected table
+        document.getElementById('tableSelect').addEventListener('change', function() {
+            const table = this.value;
+            if (table) {
+                fetch(`/fetch_data/get_columns?table=${table}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.columns) {
+                            const columnsSelect = document.getElementById('columnsSelect');
+                            columnsSelect.innerHTML = ''; // Clear previous options
+                            data.columns.forEach(column => {
+                                const option = document.createElement('option');
+                                option.value = column;
+                                option.text = column;
+                                columnsSelect.add(option);
+                            });
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+
+        // Handle BigQuery Form Submission
+        document.getElementById('bigQueryForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const table = document.getElementById('tableSelect').value;
+            const columns = Array.from(document.getElementById('columnsSelect').selectedOptions).map(option => option.value);
+            const limit = document.getElementById('limitInput').value;
+
+            if (!table || columns.length === 0) {
+                showToast('Please select a table and at least one column.', 'warning');
+                return;
+            }
+
+            const sqlQuery = `SELECT ${columns.join(', ')} FROM master_saned.${table} ${limit ? 'LIMIT ' + limit : ''}`;
+            document.getElementById('sqlQuery').textContent = `Executed Query: ${sqlQuery}`;
+
+            try {
+                const response = await fetch('/fetch_data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sqlQuery })
+                });
+                const data = await response.json();
+
+                const responseMessage = document.getElementById('responseMessage');
+                if (data.message) {
+                    responseMessage.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                } else if (data.error) {
+                    responseMessage.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                }
+
+                // Handle displaying the data
+                if (data.results && data.results.length > 0) {
+                    const tableDiv = document.getElementById('resultsTable');
+                    tableDiv.innerHTML = ''; // Clear previous content
+
+                    const table = document.createElement('table');
+                    table.id = 'resultsDataTable';
+                    table.className = 'table table-bordered';
+                    const thead = document.createElement('thead');
+                    const tbody = document.createElement('tbody');
+
+                    // Create table headers
+                    const headers = Object.keys(data.results[0]);
+                    const headerRow = document.createElement('tr');
+                    headers.forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+                    thead.appendChild(headerRow);
+
+                    // Create table rows
+                    data.results.forEach(row => {
+                        const tr = document.createElement('tr');
+                        headers.forEach(header => {
+                            const td = document.createElement('td');
+                            td.textContent = row[header];
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+
+                    table.appendChild(thead);
+                    table.appendChild(tbody);
+                    tableDiv.appendChild(table);
+
+                    // Initialize DataTables
+                    $('#resultsDataTable').DataTable();
+                } else {
+                    document.getElementById('resultsTable').innerHTML = '<div class="alert alert-warning">No results found.</div>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error fetching data. Please try again later.', 'danger');
+            }
+        });
+
+        // Handle Fetch Data Form Submission
+        document.getElementById('dataForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = {
+                start_date: document.getElementById('start_date').value,
+                end_date: document.getElementById('end_date').value,
+                sponsorshipStatus: document.getElementById('sponsorshipStatus').value,
+                project: document.getElementById('project').value,
+                status: document.getElementById('status').value
+            };
+
+            try {
+                const response = await fetch('/fetch_data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+
+                const responseMessage = document.getElementById('responseMessage');
+                if (data.message) {
+                    responseMessage.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                } else if (data.error) {
+                    responseMessage.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                }
+
+                // Handle displaying the data
+                if (data.results && data.results.length > 0) {
+                    const tableDiv = document.getElementById('resultsTable');
+                    tableDiv.innerHTML = ''; // Clear previous content
+
+                    const table = document.createElement('table');
+                    table.id = 'resultsDataTable';
+                    table.className = 'table table-bordered';
+                    const thead = document.createElement('thead');
+                    const tbody = document.createElement('tbody');
+
+                    // Create table headers
+                    const headers = Object.keys(data.results[0]);
+                    const headerRow = document.createElement('tr');
+                    headers.forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        headerRow.appendChild(th);
+                    });
+                    thead.appendChild(headerRow);
+
+                    // Create table rows
+                    data.results.forEach(row => {
+                        const tr = document.createElement('tr');
+                        headers.forEach(header => {
+                            const td = document.createElement('td');
+                            td.textContent = row[header];
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+
+                    table.appendChild(thead);
+                    table.appendChild(tbody);
+                    tableDiv.appendChild(table);
+
+                    // Initialize DataTables
+                    $('#resultsDataTable').DataTable();
+                } else {
+                    document.getElementById('resultsTable').innerHTML = '<div class="alert alert-warning">No results found.</div>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('Error fetching data. Please try again later.', 'danger');
+            }
+        });
+
+        // Download CSV Functionality
+        document.getElementById('downloadCsv').addEventListener('click', function() {
+            window.location.href = '/fetch_data/download_csv';
+        });
+
+        // Populate Select Elements with Distinct Values
+        fetch('/fetch_distinct_values')
+            .then(response => response.json())
+            .then(data => {
+                if (data.sponsorshipStatus) {
+                    const sponsorshipSelect = document.getElementById('sponsorshipStatus');
+                    data.sponsorshipStatus.forEach(status => {
+                        const option = document.createElement('option');
+                        option.value = status;
+                        option.text = status;
+                        sponsorshipSelect.add(option);
+                    });
+                }
+                if (data.projects) {
+                    const projectSelect = document.getElementById('project');
+                    data.projects.forEach(project => {
+                        const option = document.createElement('option');
+                        option.value = project;
+                        option.text = project;
+                        projectSelect.add(option);
+                    });
+                }
+                if (data.statuses) {
+                    const statusSelect = document.getElementById('status');
+                    data.statuses.forEach(status => {
+                        const option = document.createElement('option');
+                        option.value = status;
+                        option.text = status;
+                        statusSelect.add(option);
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+{% endblock %}

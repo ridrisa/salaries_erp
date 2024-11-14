@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+{% block title %}Vehicle & Fleet{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Vehicle & Fleet Management</h1>
+    <p class="text-center">Manage your vehicle and fleet data here.</p>
+
+    <div class="row">
+        <!-- Create Vehicle Log -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Add Vehicle Log</h3>
+                </div>
+                <div class="card-body">
+                    <form id="addVehicleLogForm">
+                        <div class="form-group">
+                            <label for="date">Date:</label>
+                            <input type="date" id="date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="rentType">Rent Type:</label>
+                            <input type="text" id="rentType" class="form-control" placeholder="Enter Rent Type" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="carsPlateLetterEnglish">Cars Plate Letter English:</label>
+                            <input type="text" id="carsPlateLetterEnglish" class="form-control" placeholder="Enter Cars Plate Letter English" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="carPlateNumbers">Car Plate Numbers:</label>
+                            <input type="text" id="carPlateNumbers" class="form-control" placeholder="Enter Car Plate Numbers" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="carPlate">Car Plate:</label>
+                            <input type="text" id="carPlate" class="form-control" placeholder="Enter Car Plate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="carModel">Car Model:</label>
+                            <input type="text" id="carModel" class="form-control" placeholder="Enter Car Model" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="movementType">Movement Type:</label>
+                            <input type="text" id="movementType" class="form-control" placeholder="Enter Movement Type" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="courierId">Courier ID:</label>
+                            <input type="text" id="courierId" class="form-control" placeholder="Enter Courier ID" required>
+                        </div>
+                        <button type="button" onclick="addVehicleLog()" class="btn btn-primary btn-block">Add Vehicle Log</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Read Vehicle Logs -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Fetch Vehicle Logs</h3>
+                </div>
+                <div class="card-body text-center">
+                    <button type="button" onclick="fetchVehicleLogs()" class="btn btn-primary btn-block">Fetch Vehicle Logs</button>
+                    <div id="vehicleLogs" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Vehicle Log -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Update Vehicle Log</h3>
+                </div>
+                <div class="card-body">
+                    <form id="updateVehicleLogForm">
+                        <div class="form-group">
+                            <label for="updateDate">Date:</label>
+                            <input type="date" id="updateDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateRentType">Rent Type:</label>
+                            <input type="text" id="updateRentType" class="form-control" placeholder="Enter Rent Type" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateCarsPlateLetterEnglish">Cars Plate Letter English:</label>
+                            <input type="text" id="updateCarsPlateLetterEnglish" class="form-control" placeholder="Enter Cars Plate Letter English" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateCarPlateNumbers">Car Plate Numbers:</label>
+                            <input type="text" id="updateCarPlateNumbers" class="form-control" placeholder="Enter Car Plate Numbers" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateCarPlate">Car Plate:</label>
+                            <input type="text" id="updateCarPlate" class="form-control" placeholder="Enter Car Plate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateCarModel">Car Model:</label>
+                            <input type="text" id="updateCarModel" class="form-control" placeholder="Enter Car Model" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateMovementType">Movement Type:</label>
+                            <input type="text" id="updateMovementType" class="form-control" placeholder="Enter Movement Type" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateCourierId">Courier ID:</label>
+                            <input type="text" id="updateCourierId" class="form-control" placeholder="Enter Courier ID" required>
+                        </div>
+                        <button type="button" onclick="updateVehicleLog()" class="btn btn-primary btn-block">Update Vehicle Log</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Vehicle Log -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Delete Vehicle Log</h3>
+                </div>
+                <div class="card-body">
+                    <form id="deleteVehicleLogForm">
+                        <div class="form-group">
+                            <label for="deleteDate">Date:</label>
+                            <input type="date" id="deleteDate" class="form-control" required>
+                        </div>
+                        <button type="button" onclick="deleteVehicleLog()" class="btn btn-danger btn-block">Delete Vehicle Log</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Insights -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Vehicle Insights</h3>
+                </div>
+                <div class="card-body">
+                    <form id="vehicleInsightsForm">
+                        <div class="form-group">
+                            <label for="insightsStartDate">Start Date:</label>
+                            <input type="date" id="insightsStartDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="insightsEndDate">End Date:</label>
+                            <input type="date" id="insightsEndDate" class="form-control" required>
+                        </div>
+                        <button type="button" onclick="fetchVehicleInsights()" class="btn btn-primary btn-block">Fetch Vehicle Insights</button>
+                    </form>
+                    <div id="vehicleInsights" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vehicle Charts -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Vehicle Charts</h3>
+                </div>
+                <div class="card-body text-center">
+                    <button type="button" onclick="fetchVehicleCharts('day')" class="btn btn-primary btn-block">Daily Chart</button>
+                    <button type="button" onclick="fetchVehicleCharts('month')" class="btn btn-primary btn-block">Monthly Chart</button>
+                    <button type="button" onclick="fetchVehicleCharts('year')" class="btn btn-primary btn-block">Yearly Chart</button>
+                    <div id="vehicleCharts" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function addVehicleLog() {
+        const date = document.getElementById('date').value;
+        const rentType = document.getElementById('rentType').value;
+        const carsPlateLetterEnglish = document.getElementById('carsPlateLetterEnglish').value;
+        const carPlateNumbers = document.getElementById('carPlateNumbers').value;
+        const carPlate = document.getElementById('carPlate').value;
+        const carModel = document.getElementById('carModel').value;
+        const movementType = document.getElementById('movementType').value;
+        const courierId = document.getElementById('courierId').value;
+
+        try {
+            const response = await fetch('/vehicle_fleet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ date, rentType, carsPlateLetterEnglish, carPlateNumbers, carPlate, carModel, movementType, courierId }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Network response was not ok');
+            }
+
+            const result = await response.json();
+            alert(result.message);
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+
+    async function fetchVehicleLogs() {
+        try {
+            const response = await fetch('/vehicle_fleet');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const logs = await response.json();
+            const vehicleLogsDiv = document.getElementById('vehicleLogs');
+            vehicleLogsDiv.innerHTML = '';
+
+            logs.forEach(log => {
+                const logItem = document.createElement('div');
+                logItem.className = 'alert alert-info';
+                logItem.textContent = `Date: ${log.date}, Rent Type: ${log.rent_type}, Plate: ${log.car_plate}`;
+                vehicleLogsDiv.appendChild(logItem);
+            });
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+
+    async function updateVehicleLog() {
+        const date = document.getElementById('updateDate').value;
+        const rentType = document.getElementById('updateRentType').value;
+        const carsPlateLetterEnglish = document.getElementById('updateCarsPlateLetterEnglish').value;
+        const carPlateNumbers = document.getElementById('updateCarPlateNumbers').value;
+        const carPlate = document.getElementById('updateCarPlate').value;
+        const carModel = document.getElementById('updateCarModel').value;
+        const movementType = document.getElementById('updateMovementType').value;
+        const courierId = document.getElementById('updateCourierId').value;
+
+        try {
+            const response = await fetch('/vehicle_fleet', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ date, rentType, carsPlateLetterEnglish, carPlateNumbers, carPlate, carModel, movementType, courierId }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Network response was not ok');
+            }
+
+            const result = await response.json();
+            alert(result.message);
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+
+    async function deleteVehicleLog() {
+        const date = document.getElementById('deleteDate').value;
+
+        try {
+            const response = await fetch(`/vehicle_fleet?date=${date}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Network response was not ok');
+            }
+
+            const result = await response.json();
+            alert(result.message);
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+    async function fetchVehicleCharts(timeFrame) {
+        try {
+            const response = await fetch(`/vehicle_charts?time_frame=${timeFrame}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Network response was not ok');
+            }
+            const charts = await response.json();
+            if (!Array.isArray(charts)) {
+                throw new TypeError('Expected an array of charts');
+            }
+            const vehicleChartsDiv = document.getElementById('vehicleCharts');
+            vehicleChartsDiv.innerHTML = '';
+
+            charts.forEach(chart => {
+                const chartItem = document.createElement('div');
+                chartItem.className = 'alert alert-info';
+                chartItem.textContent = `Period: ${chart.period}, Vehicle Count: ${chart.vehicle_count}`;
+                vehicleChartsDiv.appendChild(chartItem);
+            });
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+
+    async function fetchVehicleInsights() {
+        const startDate = document.getElementById('insightsStartDate').value;
+        const endDate = document.getElementById('insightsEndDate').value;
+
+        try {
+            const response = await fetch(`/vehicle_insights?start_date=${startDate}&end_date=${endDate}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Network response was not ok');
+            }
+            const insights = await response.json();
+            if (!Array.isArray(insights)) {
+                throw new TypeError('Expected an array of insights');
+            }
+            const vehicleInsightsDiv = document.getElementById('vehicleInsights');
+            vehicleInsightsDiv.innerHTML = '';
+
+            insights.forEach(insight => {
+                const insightItem = document.createElement('div');
+                insightItem.className = 'alert alert-info';
+                insightItem.textContent = `Movement Type: ${insight.movement_type}, Count: ${insight.count}`;
+                vehicleInsightsDiv.appendChild(insightItem);
+            });
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
+    }
+</script>
+
+{% endblock %}

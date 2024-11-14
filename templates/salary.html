@@ -1,0 +1,151 @@
+<!-- ./templates/salary.html -->
+{% extends "base.html" %}
+
+{% block title %}Salary Management{% endblock %}
+
+{% block content %}
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar bg-dark text-light">
+        <!-- Category Buttons -->
+        <div class="sidebar-sticky p-3">
+            <h5 class="sidebar-heading">Categories</h5>
+            <button class="btn btn-outline-light w-100 mb-2 category-btn" data-category="Motorcycle">Motorcycle</button>
+            <button class="btn btn-outline-light w-100 mb-2 category-btn" data-category="Food Trial">Food Trial</button>
+            <button class="btn btn-outline-light w-100 mb-2 category-btn" data-category="Food In-House New">Food In-House New</button>
+            <button class="btn btn-outline-light w-100 mb-2 category-btn" data-category="Food In-House Old">Food In-House Old</button>
+            <button class="btn btn-outline-light w-100 mb-2 category-btn" data-category="Ecommerce WH">Ecommerce WH</button>
+            <button class="btn btn-outline-light w-100 mb-2 category-btn" data-category="Ecommerce">Ecommerce</button>
+            <button class="btn btn-outline-light w-100 mb-2 category-btn" data-category="Ajeer">Ajeer</button>
+            <button class="btn btn-outline-success w-100 mb-2 category-btn" data-category="All">View All</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <!-- Month and Year Selection -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <label for="month" class="form-label text-light">Select Month</label>
+                <select id="month" class="form-select">
+                    <option value="" selected disabled>Choose month</option>
+                    {% for i in range(1, 13) %}
+                        <option value="{{ i }}">{{ calendar.month_name[i] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="year" class="form-label text-light">Select Year</label>
+                <select id="year" class="form-select">
+                    <option value="" selected disabled>Choose year</option>
+                    {% for year in [2024, 2025] %}
+                        <option value="{{ year }}">{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Buttons for Calculating Salaries -->
+        <div class="text-center my-4">
+            <button id="calculateSalariesBtn" class="btn btn-success">
+                <i class="fas fa-calculator"></i> Calculate Salaries
+            </button>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="text-center my-4 d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Calculating...</span>
+            </div>
+            <p class="text-light">Calculating salaries...</p>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="d-none">
+            <h3 class="text-light">Results</h3>
+            <table id="salaryTable" class="table table-dark table-striped mt-3">
+                <thead class="table-light">
+                    <tr>
+                        <!-- Initial headers can be kept or removed since app.js will populate them -->
+                        <!-- For clarity, you can leave them empty or remove thead content -->
+                        <th>BARQ ID</th>
+                        <th>Name</th>
+                        <th>Total Salary</th>
+                        <th>Bonus Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Dashboard Section (Optional) -->
+        <div id="dashboard" class="d-none">
+            <!-- Add dashboard insights and charts here -->
+            <h3 class="text-light">Dashboard</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Employees</h5>
+                            <p class="card-text" id="totalEmployees">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Salary</h5>
+                            <p class="card-text" id="totalSalary">SAR 0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Bonuses</h5>
+                            <p class="card-text" id="totalBonuses">SAR 0.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="row">
+                <div class="col-md-6">
+                    <canvas id="salaryDistributionChart" height="150"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <canvas id="bonusDistributionChart" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Detail Modal (Used by app.js) -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Salary Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detailModalContent">
+                    <!-- Detailed salary information will be populated here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success generate-payslip-btn">Generate Payslip</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <!-- Include app.js only on salary.html -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

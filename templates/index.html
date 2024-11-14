@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container text-center my-4">
+    <h1 class="display-4 text-primary" style="font-family: 'Recursive', cursive;">BARQ ERP</h1>
+    <p class="lead text-secondary">Streamline Your Business Operations with Ease</p>
+</div>
+<div class="container">
+    <div class="logo-container text-center my-5">
+        <img src="{{ url_for('static', filename='images/erp26.png') }}" style="height:10% ; width:20%; " alt="BARQ ERP" class="cover-photo img-fluid main-page-logo rounded-img">
+    </div>
+    
+    <div class="card mb-4 bg-light border-0 shadow-sm">
+        <div class="card-body text-center">
+            <h2 class="text-info">Discover Our Powerful Modules</h2>
+            <p class="text-muted">Select a module to get started</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+            <div class="card h-100 border-0 shadow-sm card-module">
+                <div class="card-header bg-primary text-white text-center">Courier Profile</div>
+                <img src="{{ url_for('static', filename='images/courier_profile.png') }}" class="img-fluid rounded-img" alt="Courier Profile">
+                <div class="card-body text-center">
+                    <a href="/courier_profile" class="btn btn-primary text-white text-center btn-block">View Details</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+            <div class="card h-100 border-0 shadow-sm card-module">
+                <div class="card-header bg-secondary text-white text-center">Vehicle & Fleet</div>
+                <img src="{{ url_for('static', filename='images/fleet2.png') }}" class="img-fluid rounded-img" alt="Vehicle & Fleet">
+                <div class="card-body text-center">
+                    <a href="/vehicle_fleet" class="btn btn-secondary btn-block">View Details</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+            <div class="card h-100 border-0 shadow-sm card-module">
+                <div class="card-header bg-success text-white text-center">Accommodation & Facilities</div>
+                <img src="{{ url_for('static', filename='images/building.png') }}" class="img-fluid rounded-img" alt="Accommodation & Facilities">
+                <div class="card-body text-center">
+                    <a href="/accommodation_facilities" class="btn btn-success btn-block">View Details</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+            <div class="card h-100 border-0 shadow-sm card-module">
+                <div class="card-header bg-secondary text-white text-center">Performance & Orders</div>
+                <img src="{{ url_for('static', filename='images/performance.png') }}" class="img-fluid rounded-img" alt="Performance & Orders">
+                <div class="card-body text-center">
+                    <a href="/performance_orders" class="btn btn-secondary btn-block">View Details</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+            <div class="card h-100 border-0 shadow-sm card-module">
+                <div class="card-header bg-warning text-dark text-center">Tickets & Tasks</div>
+                <img src="{{ url_for('static', filename='images/tickets.png') }}" class="img-fluid rounded-img" alt="Tickets & Tasks">
+                <div class="card-body text-center">
+                    <a href="/tickets_tasks" class="btn btn-warning btn-block">View Details</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+            <div class="card h-100 border-0 shadow-sm card-module">
+                <div class="card-header bg-danger text-white text-center">Saned Management</div>
+                <img src="{{ url_for('static', filename='images/jahezcontrol.png') }}" class="img-fluid rounded-img" alt="Saned Management">
+                <div class="card-body text-center">
+                    <a href="/saned_management" class="btn btn-danger btn-block">View Details</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+            <div class="card h-100 border-0 shadow-sm card-module">
+                <div class="card-header bg-info text-white text-center">Finance & Settlement</div>
+                <img src="{{ url_for('static', filename='images/finance.png') }}" class="img-fluid rounded-img" alt="Finance & Settlement">
+                <div class="card-body text-center">
+                    <a href="/finance_settlement" class="btn btn-info btn-block">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<script>
+    var spec = '/chart.json';
+    vegaEmbed('#vis', spec).then(function(result) {
+        console.log('Chart successfully embedded.');
+    }).catch(console.error);
+</script>
+{% endblock %}
